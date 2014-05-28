@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
 
 
 
-
+  
   def update_devise_parameter_sanitizer
     devise_parameter_sanitizer.for(:sign_up)
     # devise_parameter_sanitizer.for(:account_update).push(:kind,:avatar)

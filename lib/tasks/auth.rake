@@ -43,23 +43,25 @@ namespace :auth do
     puts create_account(email, pass, headers)
   end
 
-  # task :create => :environment do
-  #   email = "#{SecureRandom.uuid[0..4]}@test.com"
-  #   pass  = "testpass"
-  #   data  = { "user[email]" => email, "user[password]" => pass, "user[password_confirmation]" => pass }
-  #   headers = get_headers()
-  #   headers['Content-Type'] = 'application/json'
 
-  #   url = URI.parse('http://localhost:3000/users.json')
-  #   req = Net::HTTP::Post.new(url.path, headers)
-  #   req.body = { user: { email: email, password: pass, password_confirmation: pass } }.to_json
+  task :user => :environment do
+    # email = "#{SecureRandom.uuid[0..4]}@test.com"
+    # pass  = "testpass"
+    id = 1
+    auth_token = 'dcb00117-324c-478c-a96d-254b31599373'
 
-  #   puts "Sending #{data}"
-  #   res = Net::HTTP.start(url.host, url.port) {|http|
-  #     http.request(req)
-  #   }
-  #   puts res.code
-  #   puts res.read_body
-  # end
+    # headers ||= get_headers()
+    headers = {}
+    headers['Auth-Token'] = auth_token
+    headers['Content-Type'] = 'application/json'
+
+    url = URI.parse("http://localhost:3000/users/#{id}.json")
+    req = Net::HTTP::Get.new(url.path, headers)
+    res = Net::HTTP.start(url.host, url.port) {|http|
+      http.request(req)
+    }
+    # puts JSON.parse(res.read_body)
+    puts res.read_body
+  end
 
 end
