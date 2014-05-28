@@ -19,7 +19,7 @@ class RegistrationsController < Devise::RegistrationsController
   end
 
   def create
-    super
+    # super
 
     build_resource(sign_up_params)
 
@@ -30,13 +30,10 @@ class RegistrationsController < Devise::RegistrationsController
         set_flash_message :notice, :signed_up if is_flashing_format?
         sign_up(resource_name, resource)
         # respond_with resource, location: after_sign_up_path_for(resource)
-
-        # Adding CSRF token
         # response.headers['auth_token'] = resource.auth_token
-
         respond_to do |format|
-          format.html { redirect_to resource }
           format.json { render json: resource.to_json(:only => [:id, :auth_token]) }
+          format.html { redirect_to resource }
         end
       else
         set_flash_message :notice, :"signed_up_but_#{resource.inactive_message}" if is_flashing_format?

@@ -27,27 +27,19 @@ namespace :auth do
     email = "#{SecureRandom.uuid[0..4]}@test.com"
     pass  = "testpass"
     data  = { "user[email]" => email, "user[password]" => pass, "user[password_confirmation]" => pass }
-
     headers = get_headers()
-    puts headers
+    headers['Content-Type'] = 'application/json'
 
-    
     url = URI.parse('http://localhost:3000/users.json')
     req = Net::HTTP::Post.new(url.path, headers)
     req.body = { user: { email: email, password: pass, password_confirmation: pass } }.to_json
-    # req.form_data = { user: { email: email, password: pass, password_confirmation: pass } }
-    # req.set_form_data(data)
-    req['Content-Type'] = 'application/json'
 
     puts "Sending #{data}"
     res = Net::HTTP.start(url.host, url.port) {|http|
       http.request(req)
     }
-
     puts res.code
     puts res.read_body
-    
-
   end
 
 end
