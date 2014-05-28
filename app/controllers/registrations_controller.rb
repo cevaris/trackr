@@ -3,11 +3,21 @@ class RegistrationsController < Devise::RegistrationsController
   
 
   def new
-    super
+    # super
+
+    build_resource({})
+    # respond_with self.resource
+
     # Adding CSRF token
     response.headers['X-CSRF-Token'] = form_authenticity_token
+    
+    respond_to do |format|
+      format.html { respond_with 'new', self.resource }
+      format.json { head :ok }
+    end   
+    
   end
-  
+
   def create
     super
 
