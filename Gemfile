@@ -39,4 +39,4 @@ gem 'spring',        group: :development
 # gem 'debugger', group: [:development, :test]
 
 gem 'devise'
-# gem "twitter-bootstrap-rails"
+gem 'net-ssh'

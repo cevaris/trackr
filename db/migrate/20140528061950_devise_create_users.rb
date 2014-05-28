@@ -31,8 +31,10 @@ class DeviseCreateUsers < ActiveRecord::Migration
       # t.datetime :locked_at
 
       t.string :auth_token, :unique => true
-      t.string :private_key, default: ""
-      t.string :public_key, default: ""
+
+      t.text :private_key, default: ""
+      t.text :public_key, default: ""
+      
       t.string :volume_id, default: "", :unique => true
 
       t.timestamps

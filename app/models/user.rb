@@ -1,4 +1,5 @@
 require 'securerandom'
+require 'net/ssh'
 
 # t.string   "email",                  default: "", null: false
 # t.string   "encrypted_password",     default: "", null: false
@@ -25,7 +26,26 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 
   before_save :default_values
+
+  private
+
   def default_values
+
     self.auth_token ||= SecureRandom.uuid
+    
+    if self.private_key.blank? || self.public_key.blank?
+      self.private_key, self.public_key = generate_ssh_keys()
+    end
   end
+
+
+  def generate_ssh_keys()
+    key = OpenSSL::PKey::RSA.new 4096
+    type = key.ssh_type
+    data = [ key.to_blob ].pack('m0')
+
+    openssh_format = "#{type} #{data}"
+    return key.to_pem, openssh_format
+  end
+
 end
