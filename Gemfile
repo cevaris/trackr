@@ -40,3 +40,4 @@ gem 'spring',        group: :development
 
 gem 'devise'
 gem 'net-ssh'
+gem 'net-http-persistent'
