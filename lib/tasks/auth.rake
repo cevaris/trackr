@@ -23,23 +23,43 @@ namespace :auth do
     return {'X-CSRF-Token' => csrf, 'Cookie' => cookies}
   end
 
-  task :create => :environment do
-    email = "#{SecureRandom.uuid[0..4]}@test.com"
-    pass  = "testpass"
-    data  = { "user[email]" => email, "user[password]" => pass, "user[password_confirmation]" => pass }
-    headers = get_headers()
+  def create_account(email, pass, headers=nil)
+    headers ||= get_headers()
     headers['Content-Type'] = 'application/json'
 
     url = URI.parse('http://localhost:3000/users.json')
     req = Net::HTTP::Post.new(url.path, headers)
     req.body = { user: { email: email, password: pass, password_confirmation: pass } }.to_json
-
-    puts "Sending #{data}"
     res = Net::HTTP.start(url.host, url.port) {|http|
       http.request(req)
     }
-    puts res.code
-    puts res.read_body
+    JSON.parse(res.read_body)
   end
+
+  task :create => :environment do
+    email = "#{SecureRandom.uuid[0..4]}@test.com"
+    pass  = "testpass"
+    headers = get_headers()
+    puts create_account(email, pass, headers)
+  end
+
+  # task :create => :environment do
+  #   email = "#{SecureRandom.uuid[0..4]}@test.com"
+  #   pass  = "testpass"
+  #   data  = { "user[email]" => email, "user[password]" => pass, "user[password_confirmation]" => pass }
+  #   headers = get_headers()
+  #   headers['Content-Type'] = 'application/json'
+
+  #   url = URI.parse('http://localhost:3000/users.json')
+  #   req = Net::HTTP::Post.new(url.path, headers)
+  #   req.body = { user: { email: email, password: pass, password_confirmation: pass } }.to_json
+
+  #   puts "Sending #{data}"
+  #   res = Net::HTTP.start(url.host, url.port) {|http|
+  #     http.request(req)
+  #   }
+  #   puts res.code
+  #   puts res.read_body
+  # end
 
 end
