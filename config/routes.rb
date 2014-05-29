@@ -5,18 +5,18 @@ Rails.application.routes.draw do
   resources :users, :only => [:show]
   root to: "home#index"
 
-  # namespace :api do
-  #   namespace :v1 do
-  #     resources :users, :only => [:show]
-  #   end
-  # end
-
-
-  namespace :api, :path => "", :constraints => {:subdomain => "api"} do
+  namespace :api do
     namespace :v1 do
       resources :user, :only => [:show]
     end
   end
+
+
+  # namespace :api, :path => "", :constraints => {:subdomain => "api"} do
+  #   namespace :v1 do
+  #     resources :user, :only => [:show]
+  #   end
+  # end
 
   # namespace :v1, :constraints => {:subdomain => "api"} do
   #   resources :user, :only => [:show]
