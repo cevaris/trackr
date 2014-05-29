@@ -36,6 +36,17 @@ namespace :auth do
     JSON.parse(res.read_body)
   end
 
+  def get_user(id, auth_token)
+    headers = {'Auth-Token' => auth_token, 'Content-Type' => 'application/json' }
+
+    url = URI.parse("http://localhost:3000/api/v1/user/#{id}")
+    req = Net::HTTP::Get.new(url.path, headers)
+    res = Net::HTTP.start(url.host, url.port) {|http|
+      http.request(req)
+    }
+    JSON.parse(res.read_body)
+  end
+
   task :create => :environment do
     email = "#{SecureRandom.uuid[0..4]}@test.com"
     pass  = "testpass"
@@ -45,23 +56,11 @@ namespace :auth do
 
 
   task :user => :environment do
-    # email = "#{SecureRandom.uuid[0..4]}@test.com"
-    # pass  = "testpass"
-    id = 1
-    auth_token = 'dcb00117-324c-478c-a96d-254b31599373'
+    sample = User.first
+    id = sample.id
+    auth_token = sample.auth_token
 
-    # headers ||= get_headers()
-    headers = {}
-    headers['Auth-Token'] = auth_token
-    headers['Content-Type'] = 'application/json'
-
-    url = URI.parse("http://localhost:3000/api/v1/user/#{id}")
-    req = Net::HTTP::Get.new(url.path, headers)
-    res = Net::HTTP.start(url.host, url.port) {|http|
-      http.request(req)
-    }
-    # puts JSON.parse(res.read_body)
-    puts res.read_body
+    puts get_user(id, auth_token)
   end
 
 end
