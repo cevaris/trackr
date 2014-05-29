@@ -55,7 +55,7 @@ namespace :auth do
     headers['Auth-Token'] = auth_token
     headers['Content-Type'] = 'application/json'
 
-    url = URI.parse("http://localhost:3000/users/#{id}.json")
+    url = URI.parse("http://api.dev.com:3000/v1/user/#{id}")
     req = Net::HTTP::Get.new(url.path, headers)
     res = Net::HTTP.start(url.host, url.port) {|http|
       http.request(req)
