@@ -6,7 +6,7 @@ namespace :aws do
     include AwsHelper
 
     client = Ec2Volume.new()
-    puts client.inspect
+    puts client.instance.inspect
     # client.create()
 
 
