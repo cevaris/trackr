@@ -1,7 +1,11 @@
 module AwsHelper
+
+  class Ec2Volume
+  end
+
   class Ec2Volume
 
-    attr_accessor :client
+    attr_accessor :client, :volume, :instance
 
     def initialize()
       @client = AWS::EC2.new(
@@ -10,13 +14,41 @@ module AwsHelper
       @instance = @client.instances[ENV['EC2_INSTANCE']]
     end
 
-    def instance
-      @instance if @instance
+    def volumes
+      @instance ? @instance.attachments : []
     end
 
-    def create(size=10, availability_zone='us-east-1')
-      volume = @client.volumes.create(:size => size, :availability_zone => availability_zone)
-      attachment = volume.attach_to(@client.instances['i-de78ed8d'], "/dev/xdf33") 
+    def volume(vol_id) 
+      raise 'Client not found' unless @client
+
+      if @client.volumes[vol_id].exists?
+        @client.volumes[vol_id]
+      else
+        raise "Could not locate volume #{vol_id}"  
+      end
+      
+    end
+
+    def create(size=10)
+      raise 'Client not found' unless @client
+
+      @volume = @client.volumes.create(size: size, availability_zone: ENV['AWS_ZONE'])
+      sleep 2;puts @volume.status until @volume.status != :creating
+      @volume
+    end
+
+    def attach(instance, volume, path)
+      response = volume.attach_to(instance, path)
+      sleep 2;puts response.status until (response.exists? and response.status == :attached)
+    end
+
+    def detach(instance, volume, path)
+      response = volume.detach_from(instance, path, force: true)
+      begin
+        sleep 2;puts response.status until response.status != :detaching
+      rescue AWS::Core::Resource::NotFound
+        # Because there is a bug....
+      end      
     end
   end
 end
