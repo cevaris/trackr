@@ -2,7 +2,7 @@ module AwsHelper
 
   class Ec2Instance
 
-    attr_accessor :client, :volume, :instance
+    attr_accessor :instance
 
     def initialize()
       @client = AWS::EC2.new(
