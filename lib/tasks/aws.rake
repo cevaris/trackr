@@ -11,12 +11,12 @@ namespace :aws do
       puts "Created Volume #{volume.id}"
     end
 
-    task :delete, [:id] => :environment do |task, args|
+    task :delete, [:vol_id] => :environment do |task, args|
       include AwsHelper
       client = EbsVolume.new
       
-      puts "Deleting volume #{args.id}"
-      volume = client.volume(args.id)
+      puts "Deleting volume #{args.vol_id}"
+      volume = client.volume(args.vol_id)
       volume.delete
       puts "Deleted volume #{volume.id}"
     end
@@ -26,7 +26,9 @@ namespace :aws do
       include AwsHelper
       client = EbsVolume.new
 
-      puts client.volumes.inspect
+      client.volumes.each do |vol|
+        puts "#{vol.id} : #{vol.status}"
+      end
     end
 
   end 
@@ -34,35 +36,32 @@ namespace :aws do
 
   namespace :ec2 do
 
-    task :attach => :environment do
+    task :attach, [:vol_id,:path] => :environment do |task, args|
       include AwsHelper
       
-      client = Ec2Volume.new()
-      puts client.volumes
+      ec2 = Ec2Instance.new
+      ebs = EbsVolume.new
 
-      volume = client.create()
-      puts "Created Volume #{volume.id}"
+      puts "Fetching volume #{args.vol_id}"
+      volume = ebs.volume(args.vol_id)
+      puts "Found volume #{volume.id}"
 
-      path = "/dev/sdg1"
-      client.attach(client.instance, volume, path)
-      puts "Attached #{volume.id} to #{client.instance.id} at device #{path}"
-      puts client.volumes.inspect
+      ec2.attach(ec2.instance, volume, args.path)
+      puts "Attached #{volume.id} to #{ec2.instance.id} at device #{args.path}"
     end
 
-    task :detach => :environment do
+    task :detach, [:vol_id,:path] => :environment do |task, args|
       include AwsHelper
       
-      client = Ec2Volume.new()
-      puts client.volumes
+      ec2 = Ec2Instance.new
+      ebs = EbsVolume.new
 
-      path = "/dev/sdg1"
+      puts "Fetching volume #{args.vol_id}"
+      volume = ebs.volume(args.vol_id)
+      puts "Found volume #{volume.id}"
 
-      client.detach(client.instance, volume, path)
-      puts "Detached #{volume.id} from #{client.instance.id} at device #{path}"
-      puts client.volumes
-
-      # volume.delete
-      # puts "Deleted Volume #{volume.id}"
+      ec2.detach(ec2.instance, volume, args.path)
+      puts "Detached #{volume.id} from #{ec2.instance.id} at device #{args.path}"
     end
 
   end

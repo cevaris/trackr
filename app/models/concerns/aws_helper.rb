@@ -29,7 +29,7 @@ module AwsHelper
 
   class EbsVolume
 
-    attr_accessor :volume
+    # attr_accessor :volume
 
     def initialize()
       @client = AWS::EC2.new(
