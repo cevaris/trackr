@@ -5,7 +5,7 @@ namespace :aws do
 
     task :create => :environment do
       include AwsHelper
-      client = Ec2Volume.new
+      client = EbsVolume.new
       
       volume = client.create
       puts "Created Volume #{volume.id}"
@@ -13,19 +13,19 @@ namespace :aws do
 
     task :delete, [:id] => :environment do |task, args|
       include AwsHelper
-      client = Ec2Volume.new
+      client = EbsVolume.new
       
       puts "Deleting volume #{args.id}"
       volume = client.volume(args.id)
       volume.delete
-      puts "Deleted Volume #{volume.id}"
+      puts "Deleted volume #{volume.id}"
     end
 
 
     task :list => :environment do
       include AwsHelper
-      client = Ec2Volume.new
-      
+      client = EbsVolume.new
+
       puts client.volumes.inspect
     end
 
